@@ -3,31 +3,33 @@ import 'package:http/http.dart' as http;
 import 'package:sample_test/model/beneficiary_model.dart';
 
 class ApiService {
-  final String loginUrl = "https://api.postman.com/collections/31889484-b71f2d67-1a3a-4449-945d-bc3a1cb12387?access_key=PMAT-01JCZWMD5P4VCVPFP7BGHWET8N";
+  static const String baseUrl = 'https://zakath.cloudocz.com/api';
 
-  Future<Map<String, dynamic>> login(String username, String password) async {
+  static Future<String?> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse(loginUrl),
-      body: {'username': username, 'password': password},
+      Uri.parse('$baseUrl/login'),
+      body: {'email': email, 'password': password},
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = json.decode(response.body);
+      return data['token']; // Assuming API returns a token
     } else {
-      throw Exception('Failed to login');
+      return null;
     }
   }
 
-  Future<List<Beneficiary>> getBeneficiaries() async {
-  final response = await http.get(Uri.parse('YOUR_API_ENDPOINT'));
-  if (response.statusCode == 200) {
-    List<dynamic> jsonList = jsonDecode(response.body);
-    return jsonList.map((json) => Beneficiary.fromJson(json)).toList();
-  } else {
-    throw Exception('Failed to load beneficiaries');
+  static Future<List<Beneficiary>> fetchBeneficiaries(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/beneficiaries'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List;
+      return data.map((json) => Beneficiary.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load beneficiaries');
+    }
   }
-}
-
-
-  //Add CRUD operation logic for beneficiaries
 }

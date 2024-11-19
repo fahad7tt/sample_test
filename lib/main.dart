@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
-import 'providers/beneficiary_provider.dart';
 import 'screens/login_screen.dart';
-import 'package:provider/provider.dart';
+import 'screens/home_screen.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => BeneficiaryProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      title: 'Flutter App',
+      theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(),
-        // '/home': (context) => HomeScreen(),
+        '/home': (context) => HomeScreen(),
       },
     );
   }

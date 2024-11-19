@@ -7,36 +7,26 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final ApiService _apiService = ApiService();
-  bool _isLoading = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
 
   void _login() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => isLoading = true);
 
-    try {
-      final response = await _apiService.login(
-        _usernameController.text,
-        _passwordController.text,
-      );
-      if (response['status'] == 'success') {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid credentials')),
-        );
-      }
-    } catch (error) {
+    final token = await ApiService.login(
+      emailController.text,
+      passwordController.text,
+    );
+
+    setState(() => isLoading = false);
+
+    if (token != null) {
+      Navigator.pushReplacementNamed(context, '/home', arguments: token);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $error')),
+        SnackBar(content: Text('Invalid credentials')),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -49,16 +39,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              controller: emailController,
+              decoration: InputDecoration(labelText: 'Email'),
             ),
             TextField(
-              controller: _passwordController,
+              controller: passwordController,
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             SizedBox(height: 20),
-            _isLoading
+            isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: _login,
