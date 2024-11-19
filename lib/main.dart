@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'providers/beneficiary_provider.dart';
 import 'screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   runApp(
     MultiProvider(
-      providers: const [
-        // ChangeNotifierProvider(create: (_) => BeneficiaryProvider()),
+      providers: [
+        ChangeNotifierProvider(create: (_) => BeneficiaryProvider()),
       ],
       child: const MyApp(),
     ),
