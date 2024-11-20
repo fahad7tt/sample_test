@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:sample_test/service/api_service.dart';
-import 'package:sample_test/widgets/edit_form_fields.dart';
+import 'package:sample_test/widgets/beneficiaries/edit_form_fields.dart';
 
 class EditBeneficiaryPage extends StatefulWidget {
   final dynamic beneficiary;
@@ -21,7 +21,7 @@ class _EditBeneficiaryPageState extends State<EditBeneficiaryPage> {
   void initState() {
     super.initState();
     beneficiaryFormFields = BeneficiaryFormFields();
-    beneficiaryFormFields.initializeControllers(widget.beneficiary); // Initialize the controllers with beneficiary data
+    beneficiaryFormFields.initializeControllers(widget.beneficiary);
   }
 
   @override
@@ -43,8 +43,10 @@ class _EditBeneficiaryPageState extends State<EditBeneficiaryPage> {
                     if (_formKey.currentState!.validate()) {
                       final updatedBeneficiary = {
                         'name': beneficiaryFormFields.nameController.text,
-                        'age': int.parse(beneficiaryFormFields.ageController.text),
-                        'mobile_number': beneficiaryFormFields.mobileController.text,
+                        'age':
+                            int.parse(beneficiaryFormFields.ageController.text),
+                        'mobile_number':
+                            beneficiaryFormFields.mobileController.text,
                         'job': beneficiaryFormFields.jobController.text,
                         'place': beneficiaryFormFields.placeController.text,
                       };

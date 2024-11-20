@@ -1,9 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
+import 'package:sample_test/widgets/custom/custom_button.dart';
+import 'package:sample_test/widgets/custom/custom_input_field.dart';
 import 'home_screen.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/custom_input_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

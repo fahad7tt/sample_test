@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:sample_test/service/api_service.dart';
-import 'package:sample_test/widgets/beneficiary_text_controllers.dart';
-import 'package:sample_test/widgets/beneficiary_fields.dart';
+import 'package:sample_test/widgets/beneficiaries/beneficiary_fields.dart';
+import 'package:sample_test/widgets/beneficiaries/beneficiary_text_controllers.dart';
 
 class AddBeneficiaryPage extends StatefulWidget {
   const AddBeneficiaryPage({super.key});
@@ -13,7 +13,7 @@ class AddBeneficiaryPage extends StatefulWidget {
 
 class _AddBeneficiaryPageState extends State<AddBeneficiaryPage> {
   final _formKey = GlobalKey<FormState>();
-  final _controllers = BeneficiaryTextControllers(); // Initialize controllers
+  final _controllers = BeneficiaryTextControllers();
 
   @override
   Widget build(BuildContext context) {

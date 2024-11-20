@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sample_test/screens/add_beneficiary.dart';
+import 'package:sample_test/screens/edit_beneficiary.dart';
 import 'package:sample_test/screens/login_screen.dart';
 import 'package:sample_test/service/beneficiary_controller.dart';
-import 'package:sample_test/widgets/beneficiary_list_tile.dart';
-import 'package:sample_test/widgets/delete_confirm_dialog.dart';
-import 'package:sample_test/widgets/edit_beneficiary.dart';
-import 'package:sample_test/widgets/floating_action_button.dart';
-import 'package:sample_test/widgets/sign_out_dialog.dart';
+import 'package:sample_test/widgets/beneficiaries/beneficiary_list_tile.dart';
+import 'package:sample_test/widgets/custom/delete_confirm_dialog.dart';
+import 'package:sample_test/widgets/custom/floating_action_button.dart';
+import 'package:sample_test/widgets/custom/sign_out_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           );
-                      
+
                           if (updatedBeneficiary != null) {
                             _loadBeneficiaries();
                           }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sample_test/widgets/custom_text_field.dart';
+import 'package:sample_test/widgets/custom/custom_text_field.dart';
 
 class BeneficiaryFormFields {
   // Controllers
