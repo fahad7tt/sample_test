@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final username = _usernameController.text;
     final password = _passwordController.text;
 
-    if (username == 'a' && password == 'a') {
+    if (username == 'hamraz' && password == '131313') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),

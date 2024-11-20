@@ -1,14 +1,18 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:sample_test/screens/add_beneficiary.dart';
 import 'package:sample_test/screens/login_screen.dart';
-import 'package:sample_test/service/api_service.dart';
+import 'package:sample_test/service/beneficiary_controller.dart';
+import 'package:sample_test/widgets/beneficiary_list_tile.dart';
+import 'package:sample_test/widgets/delete_confirm_dialog.dart';
 import 'package:sample_test/widgets/edit_beneficiary.dart';
+import 'package:sample_test/widgets/floating_action_button.dart';
+import 'package:sample_test/widgets/sign_out_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -23,99 +27,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadBeneficiaries() async {
-    try {
-      final data = await ApiService.fetchBeneficiaries();
-      setState(() {
-        beneficiaries = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load beneficiaries: $e')),
-      );
-    }
+    setState(() => isLoading = true);
+    beneficiaries = await BeneficiaryController.loadBeneficiaries(context);
+    setState(() => isLoading = false);
   }
 
-  // Function to show the confirmation dialog before deleting
-  void _showDeleteConfirmationDialog(int beneficiaryId) {
+  // Show Sign Out Confirmation
+  void _showSignOutDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Deletion'),
-          content:
-              const Text('Are you sure you want to delete this beneficiary?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _deleteBeneficiary(beneficiaryId);
-              },
-              child: const Text('Delete'),
-            ),
-          ],
-        );
+        return SignOutDialog(onSignOut: _signOut);
       },
     );
   }
 
-  // Function to delete the beneficiary
-  Future<void> _deleteBeneficiary(int id) async {
-    try {
-      await ApiService.deleteBeneficiary(id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Beneficiary deleted successfully')),
-      );
-      _loadBeneficiaries(); // Reload the list after deletion
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete beneficiary: $e')),
-      );
-    }
-  }
-
-  // Function to show the confirmation dialog before sign-out
-  void _showSignOutConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Logout'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _signOut();
-              },
-              child: const Text('Logout'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Function to handle sign out
+  // Handle Sign Out
   void _signOut() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  // Show Deletion Confirmation Dialog
+  void _showDeleteConfirmationDialog(int beneficiaryId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DeleteConfirmationDialog(
+          beneficiaryId: beneficiaryId,
+          onDelete: () async {
+            await BeneficiaryController.deleteBeneficiary(
+                beneficiaryId, context);
+            _loadBeneficiaries();
+          },
+        );
+      },
     );
   }
 
@@ -125,25 +73,21 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text(
           'Beneficiaries',
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w500),
         ),
         backgroundColor: const Color.fromARGB(255, 199, 172, 245),
         elevation: 8,
         actions: [
           ElevatedButton(
-            onPressed: _showSignOutConfirmationDialog,
+            onPressed: _showSignOutDialog,
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color.fromARGB(255, 233, 38, 24),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-              minimumSize: const Size(
-                  30, 20), // Set minimum width and height of the button
-            ),
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(255, 233, 38, 24),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                minimumSize: const Size(70, 32)),
             child: const Text('Logout'),
           ),
           const SizedBox(width: 16),
@@ -158,73 +102,31 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final beneficiary = beneficiaries[index];
                     return Padding(
-                      padding: const EdgeInsets.all(9),
-                      child: Card(
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(10),
-                          title: Text(
-                              'Name: ${beneficiary['name'] ?? 'Unknown'}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Age: ${beneficiary['age'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500)),
-                              Text('Place: ${beneficiary['place'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500)),
-                              Text('Job: ${beneficiary['job'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500)),
-                              Text(
-                                  'Mobile: ${beneficiary['mobile_number'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500)),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () async {
-                                  // Navigate to the Edit screen
-                                  final updatedBeneficiary =
-                                      await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EditBeneficiaryPage(
-                                        beneficiary: beneficiary,
-                                      ),
-                                    ),
-                                  );
-
-                                  if (updatedBeneficiary != null) {
-                                    // Refresh the beneficiary list after editing
-                                    _loadBeneficiaries();
-                                  }
-                                },
+                      padding: const EdgeInsets.all(13),
+                      child: BeneficiaryListTile(
+                        beneficiary: beneficiary,
+                        onEdit: () async {
+                          final updatedBeneficiary = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditBeneficiaryPage(
+                                beneficiary: beneficiary,
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  // Delete the beneficiary
-                                  _showDeleteConfirmationDialog(
-                                      beneficiary['id']);
-                                },
-                              ),
-                            ],
-                          ),
-                          onTap: () {},
-                        ),
+                            ),
+                          );
+                      
+                          if (updatedBeneficiary != null) {
+                            _loadBeneficiaries();
+                          }
+                        },
+                        onDelete: () {
+                          _showDeleteConfirmationDialog(beneficiary['id']);
+                        },
                       ),
                     );
                   },
                 ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButtonWidget(
         onPressed: () async {
           final result = await Navigator.push(
             context,
@@ -232,11 +134,9 @@ class _HomePageState extends State<HomePage> {
           );
 
           if (result != null && result) {
-            // Refresh the beneficiary list after adding
             _loadBeneficiaries();
           }
         },
-        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

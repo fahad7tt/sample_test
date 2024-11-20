@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String _baseUrl = 'https://zakath.cloudocz.com/api';
-  static const String _token = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3pha2F0aC5jbG91ZG9jei5jb20vYXBpL2xvZ2luIiwiaWF0IjoxNzMyMTI3MTgwLCJleHAiOjE3MzIxMzA3ODAsIm5iZiI6MTczMjEyNzE4MCwianRpIjoiRG82Slk2Nk1acmlTcTNiRCIsInN1YiI6IjIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.yIuh01VA2kYkbRPdrb9cQFO2xJ7U2pZD55w2ItGxwjU';
+  static const String _token = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3pha2F0aC5jbG91ZG9jei5jb20vYXBpL2xvZ2luIiwiaWF0IjoxNzMyMTM0NDg3LCJleHAiOjE3MzIxMzgwODcsIm5iZiI6MTczMjEzNDQ4NywianRpIjoibkR3M01vV2FTdUJUNzlBQyIsInN1YiI6IjIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.WculRMjY-BdiDR6BOGkcTP8nc9dyIAOVHf7y6U81om4';
 
   static Map<String, String> get _headers => {
         'Authorization': _token,
