@@ -1,31 +1,33 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'package:sample_test/service/api_service.dart';
+import 'home_screen.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_input_field.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  bool isLoading = false;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  void _login() async {
-    setState(() => isLoading = true);
+  void _login(BuildContext context) {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
 
-    final token = await ApiService.login(
-      emailController.text,
-      passwordController.text,
-    );
-
-    setState(() => isLoading = false);
-
-    if (token != null) {
-      Navigator.pushReplacementNamed(context, '/home', arguments: token);
+    if (username == 'a' && password == 'a') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid credentials')),
+        const SnackBar(content: Text('Invalid Username or Password!')),
       );
     }
   }
@@ -33,28 +35,37 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login'),
-                  ),
-          ],
+      backgroundColor: const Color.fromARGB(255, 199, 172, 245),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Welcome',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              CustomInputField(
+                controller: _usernameController,
+                hintText: 'Username',
+                prefixIcon: Icons.person,
+              ),
+              const SizedBox(height: 10),
+              CustomInputField(
+                controller: _passwordController,
+                hintText: 'Password',
+                prefixIcon: Icons.lock,
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: 'Login',
+                onPressed: () => _login(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
